@@ -34,7 +34,7 @@ android {
         versionCode = 8
         versionName = "0.1.2" // X.Y.Z; X = Major, Y = minor, Z = Patch level
 
-        // Custom test runner to set up Hilt dependency graph
+   //     testInstrumentationRunner = "com.kaspersky.kaspresso.runner.KaspressoRunner"
         testInstrumentationRunner = "com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner"
     }
 
@@ -146,6 +146,10 @@ dependencies {
     androidTestImplementation("io.github.kakaocup:compose:1.1.0")
 
     baselineProfile(projects.benchmarks)
+
+    androidTestImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.6.0"){
+        exclude(module = "protobuf-lite")
+    }
 }
 
 baselineProfile {
@@ -159,4 +163,45 @@ baselineProfile {
 
 dependencyGuard {
     configuration("prodReleaseRuntimeClasspath")
+}
+
+// Удаление локальных отчётов
+tasks.register<Delete>("deleteLocalAllureResults") {
+    group = "verification"
+    description = "Deletes local allure-results directory"
+    delete(file("build/allure-results"))
+}
+
+// Загрузка отчётов с девайса в сборочную директорию
+tasks.register<Exec>("pullAllureResults") {
+    group = "verification"
+    description = "Pulls allure-results from device to app/build"
+    dependsOn(tasks.named("deleteLocalAllureResults"))
+    commandLine("adb", "pull", "/sdcard/Documents/allure-results", "build")
+    isIgnoreExitValue = true
+}
+
+// Очистка отчётов на девайсе
+tasks.register<Exec>("clearDeviceAllureResults") {
+    group = "verification"
+    description = "Clears allure-results directory on Android device"
+    commandLine("adb", "shell", "rm", "-rf", "/sdcard/Documents/allure-results")
+    isIgnoreExitValue = true
+}
+
+// Настройка зависимостей - для всех заданий с названием connected и androidtest выполнять clearDeviceAllureResults перед заданием и pullAllureResults после задания
+tasks.configureEach {
+    val lower = name.lowercase()
+    if (lower.startsWith("connected") && lower.endsWith("androidtest")) {
+       // dependsOn("clearDeviceAllureResults")
+        finalizedBy("pullAllureResults")
+    }
+}
+
+tasks.register<Exec>("pullAllureResults") {
+    group = "verification"
+    description = "Pulls allure-results from device to app/build"
+    executable = "/Users/sokolovaelena/Library/Android/sdk/platform-tools/adb"
+    args("pull", "/sdcard/Documents/allure-results", "build/allure-results")
+    isIgnoreExitValue = true
 }
