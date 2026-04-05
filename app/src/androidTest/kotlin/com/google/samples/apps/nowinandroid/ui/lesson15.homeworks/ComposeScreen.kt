@@ -1,4 +1,4 @@
-package lesson15.homeworks
+package com.google.samples.apps.nowinandroid.ui.lesson15.homeworks
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.samples.apps.nowinandroid.MainActivity
