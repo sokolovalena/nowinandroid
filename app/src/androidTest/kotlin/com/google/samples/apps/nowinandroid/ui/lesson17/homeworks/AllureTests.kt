@@ -28,15 +28,14 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.github.kakaocup.compose.rule.KakaoComposeTestRule
 import org.junit.Rule
 import org.junit.Test
 import androidx.compose.ui.test.ExperimentalTestApi
+import com.kaspersky.components.alluresupport.addAllureSupport
+import com.kaspersky.components.composesupport.config.ComposeConfig
+import io.github.kakaocup.compose.rule.KakaoComposeTestRule
 
 abstract class ConfigureTest : TestCase(kaspressoBuilder = Kaspresso.Builder.withForcedAllureSupport(false)) {
-    @get:Rule(order = 0)
-    val hiltRule = HiltAndroidRule(this)
-
     @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
@@ -44,79 +43,43 @@ abstract class ConfigureTest : TestCase(kaspressoBuilder = Kaspresso.Builder.wit
     val kakaoRule = KakaoComposeTestRule(composeTestRule, true)
 }
 
+
 @HiltAndroidTest
 class AllureTests : ConfigureTest() {
 
     @Test
-    fun checkToolbar() {
+    fun checkSearchFail() {
         run {
-            step("Проверить элементы главного экрана"){
+            step("Нажать на кнопку поиска") {
                 ForyouScreen {
-                    step("Проверить тулбар"){
-                        toolbarTitle{
-                            assertTextEquals("Now in Android")
-                        }
-                        toolbarSearchIcon{
-                            assertIsDisplayed()
-                        }
-                        toolbarGearIcon{
-                            assertIsDisplayed()
-                        }
-                    }
-                    step("Проверить заголовок экрана"){
-                        title{
-                            assertIsDisplayed()
-                            assertTextEquals("What are you interested in?")
-                        }
-                        subtitle{
-                            assertIsDisplayed()
-                            assertTextEquals("Updates from topics you follow will appear here. Follow some things to get started.")
-                        }
-                    }
-                    step("Нажать на кнопку поиска"){
-                        ForyouScreen{
-                            toolbarSearchIcon.performClick()
-                        }
-                    }
-                    step("Проверить экран поиска"){
-                        Thread.sleep(5_000)
-                        SearchScreen{
-                            textField.assertIsDisplayed()
-                            iconSearch.assertIsDisplayed()
-                            backButton.assertIsDisplayed()
-                        }
-                    }
+                    toolbarSearchIcon.performClick()
+                }
+            }
+            step("Проверить экран поиска") {
+                Thread.sleep(5_000)
+                SearchScreen {
+                    textField.assertIsNotDisplayed()
+                    iconSearch.assertIsDisplayed()
+                    backButton.assertIsDisplayed()
                 }
             }
         }
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun checkListItems() {
+    fun checkSearch() {
         run {
-            step("Проверить элементы в списке") {
-                LazyHomeScreen.topicList.childAt<TopicsItems>(0) {
-                    image.assertIsDisplayed()
-                    title.assertIsDisplayed()
-                    iconPlus.assertIsDisplayed()
-                }
-                LazyHomeScreen.topicList.childAt<TopicsItems>(1) {
-                    assertIsDisplayed()
-                }
-                LazyHomeScreen.topicList.childAt<TopicsItems>(2) {
-                    assertIsDisplayed()
+            step("Нажать на кнопку поиска") {
+                ForyouScreen {
+                    toolbarSearchIcon.performClick()
                 }
             }
-            step("Нажать на топик Compose") {
-                LazyHomeScreen.topicList.childAt<TopicsItems>(2) {
-                    iconPlus.performClick()
-                    checkedIcon.assertIsDisplayed()
-                }
-            }
-            step("Проверить что отобразился newList") {
-                LazyHomeScreen.newsList.childAt<NewsItems>(0) {
-                    assertIsDisplayed()
+            step("Проверить экран поиска") {
+                Thread.sleep(5_000)
+                SearchScreen {
+                    textField.assertIsDisplayed()
+                    iconSearch.assertIsDisplayed()
+                    backButton.assertIsDisplayed()
                 }
             }
         }

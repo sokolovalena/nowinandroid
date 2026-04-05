@@ -34,8 +34,8 @@ android {
         versionCode = 8
         versionName = "0.1.2" // X.Y.Z; X = Major, Y = minor, Z = Patch level
 
-   //     testInstrumentationRunner = "com.kaspersky.kaspresso.runner.KaspressoRunner"
-        testInstrumentationRunner = "com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner"
+        testInstrumentationRunner = "com.kaspersky.kaspresso.runner.KaspressoRunner"
+    //    testInstrumentationRunner = "com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner"
     }
 
     buildTypes {
@@ -172,20 +172,10 @@ tasks.register<Delete>("deleteLocalAllureResults") {
     delete(file("build/allure-results"))
 }
 
-// Загрузка отчётов с девайса в сборочную директорию
-tasks.register<Exec>("pullAllureResults") {
-    group = "verification"
-    description = "Pulls allure-results from device to app/build"
-    dependsOn(tasks.named("deleteLocalAllureResults"))
-    commandLine("adb", "pull", "/sdcard/Documents/allure-results", "build")
-    isIgnoreExitValue = true
-}
-
 // Очистка отчётов на девайсе
 tasks.register<Exec>("clearDeviceAllureResults") {
-    group = "verification"
-    description = "Clears allure-results directory on Android device"
     commandLine("adb", "shell", "rm", "-rf", "/sdcard/Documents/allure-results")
+    executable = "/Users/sokolovaelena/Library/Android/sdk/platform-tools/adb"
     isIgnoreExitValue = true
 }
 
@@ -193,7 +183,7 @@ tasks.register<Exec>("clearDeviceAllureResults") {
 tasks.configureEach {
     val lower = name.lowercase()
     if (lower.startsWith("connected") && lower.endsWith("androidtest")) {
-       // dependsOn("clearDeviceAllureResults")
+        dependsOn("clearDeviceAllureResults")
         finalizedBy("pullAllureResults")
     }
 }

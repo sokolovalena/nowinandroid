@@ -24,6 +24,7 @@ import com.kaspersky.kaspresso.kaspresso.Kaspresso
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import io.github.kakaocup.compose.rule.KakaoComposeTestRule
 import org.junit.Rule
 import org.junit.Test
