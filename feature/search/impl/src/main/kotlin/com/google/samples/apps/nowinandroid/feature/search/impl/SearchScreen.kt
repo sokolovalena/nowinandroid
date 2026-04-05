@@ -457,6 +457,7 @@ private fun SearchToolbar(
                 contentDescription = stringResource(
                     id = string.core_ui_back,
                 ),
+                modifier = Modifier.testTag("backButton"),
             )
         }
         SearchTextField(
@@ -494,6 +495,7 @@ private fun SearchTextField(
                     id = searchR.string.feature_search_api_title,
                 ),
                 tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.testTag("iconSearch")
             )
         },
         trailingIcon = {
