@@ -1,4 +1,4 @@
-package lesson15.homeworks
+package com.google.samples.apps.nowinandroid.ui.lesson15.homeworks
 
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
